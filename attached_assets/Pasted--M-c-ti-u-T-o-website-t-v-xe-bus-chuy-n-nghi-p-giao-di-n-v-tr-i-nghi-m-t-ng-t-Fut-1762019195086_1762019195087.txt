@@ -1,0 +1,204 @@
+### 🎯 Mục tiêu
+Tạo **website đặt vé xe bus chuyên nghiệp**, giao diện và trải nghiệm tương tự [FutaBus.vn](https://futabus.vn/).  
+Chỉ cần **frontend demo (mock data)**, chuẩn **UI/UX doanh nghiệp vận tải**, **responsive**, **animation nhẹ nhàng**, **chuẩn SEO layout**.
+
+---
+
+### ⚙️ Công nghệ gợi ý
+- **Framework:** React / Next.js 14 (App Router)
+- **UI Library:** Tailwind CSS + shadcn/ui
+- **Animation:** Framer Motion (fade, scroll reveal)
+- **Carousel:** Swiper.js hoặc Keen-slider
+- **State:** Zustand / Context API
+- **Mock Data:** Local JSON file
+- **Icons:** Lucide-react (bus, arrows, phone, user)
+- **Font:** Inter / SF Pro
+- **Color palette (chuẩn FUTA):**
+  - Primary: `#E31E25` (đỏ đặc trưng)
+  - Accent: `#10B981`
+  - Text: `#111827`
+  - Background: `#F9FAFB`
+  - White card: `#FFFFFF`
+
+---
+
+## 🧱 **CẤU TRÚC TRANG CHỦ (FULL LAYOUT)**
+
+---
+
+### 1️⃣ **HEADER (Sticky Top Navigation)**
+> Hiển thị trên cùng, cố định khi cuộn (sticky top-0, backdrop blur)
+
+**Thành phần:**
+- **Logo** (trái): FUTA Bus hoặc DatVe360 logo  
+- **Menu chính:**
+  - Trang chủ  
+  - Tuyến đường  
+  - Ưu đãi  
+  - Tin tức  
+  - Liên hệ  
+- **Thanh bên phải:**
+  - Icon 📞 Hotline (090x.xxx.xxx)
+  - Nút “Tải App” hoặc “Đăng nhập” (`variant="outline"`)
+  - Nút **“Đặt vé ngay”** (màu primary #E31E25, rounded-lg)
+- Hover menu có underline animate  
+- Mobile: hamburger menu mở drawer  
+
+---
+
+### 2️⃣ **HERO SECTION (Banner Tìm Chuyến Xe)**
+**Background:**
+- Ảnh nền full-width (xe bus trên đường cao tốc hoặc phong cảnh)
+- Overlay gradient đen mờ 50%
+- Nội dung căn giữa, padding lớn, min-height ~80vh  
+
+**Form tìm kiếm nổi bật:**
+- Card nổi giữa màn hình (`bg-white/95`, `rounded-2xl`, `shadow-2xl`)
+- **Radio group:**  
+  - Một chiều  
+  - Khứ hồi  
+- Link nhỏ: “Hướng dẫn mua vé” (text-sm, underline hover)
+- **Các input chính:**
+  1. **Điểm đi:** placeholder “Chọn điểm đi”
+  2. **Icon đổi vị trí:** 🔁 animation xoay 180° khi click
+  3. **Điểm đến:** placeholder “Chọn điểm đến”
+  4. **Ngày đi:** hiển thị “Thứ Năm, 01/11/2025”
+  5. **Số vé:** dropdown 1–10
+  6. **Button:** “TÌM CHUYẾN XE” (`bg-[#E31E25]`, hover sáng hơn, icon bus)
+- Responsive:
+  - Mobile: stack dọc, full-width
+  - Desktop: 5 cột ngang, justify-between
+
+---
+
+### 3️⃣ **KHUYẾN MÃI NỔI BẬT (Promotion Carousel)**
+- Slider ngang auto-scroll
+- Mỗi **card banner** gồm:
+  - Ảnh ưu đãi  
+  - Tiêu đề (Giảm 10%, Khuyến mãi tháng 11, …)  
+  - Mô tả ngắn  
+- Có navigation arrow và dot indicator  
+- Auto-play 4s, pause on hover  
+
+Mock data:
+```json
+[
+  { "id": 1, "title": "Giảm 10% vé khứ hồi", "desc": "Áp dụng tuyến HCM - Đà Lạt", "img": "/promo1.jpg" },
+  { "id": 2, "title": "Khuyến mãi tháng 11", "desc": "Giảm 50k cho tất cả tuyến nội địa", "img": "/promo2.jpg" }
+]
+4️⃣ TUYẾN PHỔ BIẾN (Popular Routes)
+Section title: “Tuyến xe phổ biến”
+
+Grid 3–4 cột
+
+Card:
+
+Ảnh nền nhẹ
+
+Icon bus nhỏ
+
+Tên tuyến (VD: “Hồ Chí Minh → Đà Lạt”)
+
+Giá từ: “Từ 350.000đ”
+
+Nút “Đặt vé ngay” (bg-[#E31E25], full-width)
+
+Hover: shadow tăng, scale nhẹ
+
+Mock data:
+
+json
+Copy code
+[
+  { "id": 1, "from": "Hồ Chí Minh", "to": "Đà Lạt", "price": 350000 },
+  { "id": 2, "from": "Hồ Chí Minh", "to": "Nha Trang", "price": 420000 },
+  { "id": 3, "from": "Hà Nội", "to": "Sapa", "price": 400000 }
+]
+5️⃣ THỐNG KÊ (Statistics Section)
+Nền nhạt (bg-[#10B981]/10)
+
+3 khối trung tâm:
+
+🧍‍♂️ Lượt khách: “10 Triệu+”
+
+🏢 Phòng vé: “450+”
+
+🚌 Chuyến xe: “1.500+ / ngày”
+
+Animation CountUp
+
+Responsive: 3 cột desktop, 1 cột mobile
+
+6️⃣ TIN TỨC MỚI (News / Blog Section)
+Tiêu đề: “Tin tức & thông tin mới nhất”
+
+Grid 3 cột
+
+Card: ảnh (16:9), tiêu đề, ngày, mô tả ngắn, CTA “Xem thêm →”
+
+Hover: zoom ảnh nhẹ
+Mock data:
+
+json
+Copy code
+[
+  { "id": 1, "title": "Mở tuyến mới HCM - Phan Thiết", "date": "2025-10-28", "desc": "FutaBus khai trương tuyến HCM - Phan Thiết phục vụ du lịch biển.", "img": "/news1.jpg" },
+  { "id": 2, "title": "Khuyến mãi tháng 11", "date": "2025-10-30", "desc": "Giảm 10% cho tất cả tuyến HCM trong tháng 11.", "img": "/news2.jpg" },
+  { "id": 3, "title": "Ứng dụng FUTA Bus", "date": "2025-10-20", "desc": "Trải nghiệm đặt vé nhanh, tiện lợi trên app FUTA.", "img": "/news3.jpg" }
+]
+7️⃣ FOOTER
+Logo + slogan ngắn
+
+4 cột nội dung:
+
+Về chúng tôi
+
+Chính sách & điều khoản
+
+Hướng dẫn & hỗ trợ
+
+Liên hệ / Hotline / Email
+
+Icon mạng xã hội: Facebook, Zalo, TikTok, YouTube
+
+Dòng bản quyền:
+© 2025 DatVe360. All rights reserved.
+
+🧭 UX & Animation
+Header sticky với hiệu ứng blur khi scroll
+
+Swap icon 🔁 xoay 180° khi đổi điểm đi/đến
+
+Smooth scroll, transition fade
+
+Carousel autoplay
+
+CountUp animation trong thống kê
+
+Hover highlight card + drop shadow mềm
+
+📁 Cấu trúc đề xuất
+pgsql
+Copy code
+/components
+  ├── Header.tsx
+  ├── HeroSearch.tsx
+  ├── PromoCarousel.tsx
+  ├── PopularRoutes.tsx
+  ├── StatsSection.tsx
+  ├── NewsSection.tsx
+  ├── Footer.tsx
+/data
+  ├── routes.json
+  ├── promotions.json
+  ├── news.json
+/pages
+  ├── index.tsx
+✅ Kết quả mong muốn
+Trang chủ FE demo hoàn chỉnh, layout giống FutaBus.vn
+
+Có Header sticky, Hero form, Promo slider, Popular routes, Stats, News, Footer
+
+Dữ liệu mock, responsive, animation nhẹ, UI chuẩn business
+
+Dễ mở rộng thành sản phẩm thật hoặc đồ án tốt nghiệp.
