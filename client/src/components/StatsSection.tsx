@@ -78,7 +78,7 @@ function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
 export function StatsSection() {
   return (
     <section
-      className="bg-futa-green/10 py-16 sm:py-20"
+      className="bg-gradient-to-r from-[#d5181d] via-[#d5181d] to-[#e84a4a] py-16 sm:py-20"
       data-testid="section-statistics"
     >
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -91,16 +91,16 @@ export function StatsSection() {
                 className="flex flex-col items-center text-center"
                 data-testid={`stat-${index + 1}`}
               >
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-futa-green/20">
-                  <Icon className="h-8 w-8 text-futa-green" />
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
+                  <Icon className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="mb-2 text-4xl font-bold text-gray-900 sm:text-5xl" data-testid={`text-stat-value-${index + 1}`}>
+                <h3 className="mb-2 text-4xl font-bold text-white sm:text-5xl" data-testid={`text-stat-value-${index + 1}`}>
                   <CountUp
                     target={stat.targetNumber}
                     suffix={stat.targetNumber === 10 ? " Triệu+" : "+"}
                   />
                 </h3>
-                <p className="text-lg font-medium text-gray-600" data-testid={`text-stat-label-${index + 1}`}>{stat.label}</p>
+                <p className="text-lg font-medium text-white/90" data-testid={`text-stat-label-${index + 1}`}>{stat.label}</p>
               </div>
             );
           })}

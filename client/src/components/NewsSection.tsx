@@ -1,13 +1,19 @@
 import { Calendar, ArrowRight, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useQuery } from "@tanstack/react-query";
-import type { News } from "@shared/schema";
+import { useLocation } from "wouter";
+import type { News } from "@/types";
+import { newsService } from "@/services";
 
 export function NewsSection() {
+  const [, setLocation] = useLocation();
+
   const { data: news, isLoading, error } = useQuery<News[]>({
-    queryKey: ["/api/news"],
+    queryKey: ["news", "latest"],
+    queryFn: () => newsService.getLatestNews(3),
   });
 
   if (error) {
@@ -52,8 +58,9 @@ export function NewsSection() {
           {news?.map((article) => (
             <Card
               key={article.id}
-              className="group overflow-hidden transition-all duration-300 hover:shadow-xl"
+              className="group cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-xl"
               data-testid={`card-news-${article.id}`}
+              onClick={() => setLocation(`/news/${article.id}`)}
             >
               <div className="relative aspect-video overflow-hidden">
                 <img
@@ -76,17 +83,25 @@ export function NewsSection() {
                 <p className="mb-4 text-sm text-gray-600 line-clamp-3" data-testid={`text-news-description-${article.id}`}>
                   {article.description}
                 </p>
-                <a
-                  href={`#news-${article.id}`}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-futa-red transition-colors hover:text-futa-red/80"
-                  data-testid={`link-read-more-${article.id}`}
-                >
+                <div className="inline-flex items-center gap-2 text-sm font-medium text-futa-red transition-colors group-hover:text-futa-red/80">
                   Xem thêm
                   <ArrowRight className="h-4 w-4" />
-                </a>
+                </div>
               </div>
             </Card>
           ))}
+        </div>
+
+        {/* View All Button */}
+        <div className="mt-12 text-center">
+          <Button
+            onClick={() => setLocation("/news")}
+            variant="outline"
+            className="border-futa-red text-futa-red hover:bg-futa-red hover:text-white"
+          >
+            Xem tất cả tin tức
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       </div>
     </section>

@@ -4,11 +4,13 @@ import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import type { Promotion } from "@shared/schema";
+import type { Promotion } from "@/types";
+import { promotionService } from "@/services";
 
 export function PromoCarousel() {
   const { data: promotions, isLoading, error } = useQuery<Promotion[]>({
-    queryKey: ["/api/promotions"],
+    queryKey: ["promotions"],
+    queryFn: () => promotionService.getAllPromotions(),
   });
 
   const [emblaRef, emblaApi] = useEmblaCarousel(

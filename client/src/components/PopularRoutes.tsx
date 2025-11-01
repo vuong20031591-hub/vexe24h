@@ -2,15 +2,30 @@ import { Bus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import type { Route } from "@shared/schema";
+import { useLocation } from "wouter";
+import type { Route } from "@/types";
+import { routeService } from "@/services";
 
 export function PopularRoutes() {
+  const [, setLocation] = useLocation();
+
   const { data: routes, isLoading, error } = useQuery<Route[]>({
-    queryKey: ["/api/routes"],
+    queryKey: ["routes", "popular"],
+    queryFn: () => routeService.getPopularRoutes(8),
   });
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("vi-VN").format(price) + "đ";
+  };
+
+  const handleBookRoute = (route: Route) => {
+    const today = new Date().toISOString().split("T")[0];
+    const params = new URLSearchParams({
+      from: route.from,
+      to: route.to,
+      date: today,
+    });
+    setLocation(`/search?${params.toString()}`);
   };
 
   if (error) {
@@ -82,6 +97,7 @@ export function PopularRoutes() {
                 <Button
                   className="w-full bg-futa-red hover:bg-futa-red/90"
                   data-testid={`button-book-route-${route.id}`}
+                  onClick={() => handleBookRoute(route)}
                 >
                   Đặt vé ngay
                 </Button>

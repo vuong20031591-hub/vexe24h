@@ -4,6 +4,7 @@ import { PromoCarousel } from "@/components/PromoCarousel";
 import { PopularRoutes } from "@/components/PopularRoutes";
 import { StatsSection } from "@/components/StatsSection";
 import { NewsSection } from "@/components/NewsSection";
+import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <PopularRoutes />
         <StatsSection />
         <NewsSection />
+        <ContactSection />
       </main>
       <Footer />
     </div>

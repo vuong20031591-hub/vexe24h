@@ -37,10 +37,13 @@ export function Footer() {
           {/* Company Info */}
           <div>
             <div className="mb-6 flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-futa-red">
-                <span className="text-xl font-bold">D</span>
-              </div>
-              <span className="text-xl font-bold">DatVe360</span>
+              <a href="/" className="flex items-center gap-3" data-testid="link-logo">
+                <img
+                  src="/favicon.png"
+                  alt="DatVe360"
+                  className="h-28 w-28"
+                />
+              </a>
             </div>
             <p className="mb-6 text-sm text-gray-400">
               Hệ thống đặt vé xe bus chuyên nghiệp, nhanh chóng và tiện lợi.

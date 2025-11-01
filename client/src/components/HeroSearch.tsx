@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -12,12 +13,14 @@ import {
 import { Bus, ArrowLeftRight, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import heroBackground from "@assets/generated_images/Hero_background_bus_highway_f1a8a3d9.png";
 
 export function HeroSearch() {
+  const [, setLocation] = useLocation();
   const [tripType, setTripType] = useState("one-way");
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
+  const [departureDate, setDepartureDate] = useState(new Date().toISOString().split("T")[0]);
+  const [returnDate, setReturnDate] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
 
   const cities = [
@@ -41,12 +44,31 @@ export function HeroSearch() {
     setTimeout(() => setIsSwapping(false), 300);
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!origin || !destination) return;
+
+    const params = new URLSearchParams({
+      from: origin,
+      to: destination,
+      date: departureDate,
+      tripType: tripType,
+    });
+
+    // Add return date if round trip
+    if (tripType === "round-trip" && returnDate) {
+      params.append("returnDate", returnDate);
+    }
+
+    setLocation(`/search?${params.toString()}`);
+  };
+
   return (
     <section className="relative min-h-[80vh] w-full overflow-hidden" data-testid="section-hero">
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroBackground})` }}
+        style={{ backgroundImage: `url(/generated_images/Hero_background_bus_highway_f1a8a3d9.png)` }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/50" />
       </div>
@@ -65,7 +87,7 @@ export function HeroSearch() {
           </div>
 
           {/* Search Card */}
-          <div className="rounded-2xl bg-white/95 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
+          <form onSubmit={handleSearch} className="rounded-2xl bg-white/95 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
             {/* Trip Type */}
             <div className="mb-6 flex items-center justify-between">
               <RadioGroup
@@ -76,13 +98,23 @@ export function HeroSearch() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="one-way" id="one-way" data-testid="radio-one-way" />
-                  <Label htmlFor="one-way" className="cursor-pointer font-medium">
+                  <Label 
+                    htmlFor="one-way" 
+                    className={`cursor-pointer font-medium transition-colors ${
+                      tripType === "one-way" ? "text-futa-red" : "text-gray-700"
+                    }`}
+                  >
                     Một chiều
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="round-trip" id="round-trip" data-testid="radio-round-trip" />
-                  <Label htmlFor="round-trip" className="cursor-pointer font-medium">
+                  <Label 
+                    htmlFor="round-trip" 
+                    className={`cursor-pointer font-medium transition-colors ${
+                      tripType === "round-trip" ? "text-futa-red" : "text-gray-700"
+                    }`}
+                  >
                     Khứ hồi
                   </Label>
                 </div>
@@ -97,7 +129,7 @@ export function HeroSearch() {
             </div>
 
             {/* Search Form */}
-            <div className="grid gap-4 md:grid-cols-5 md:gap-3">
+            <div className={`grid gap-4 md:gap-3 ${tripType === "round-trip" ? "md:grid-cols-6" : "md:grid-cols-5"}`}>
               {/* Origin */}
               <div className="space-y-2">
                 <Label htmlFor="origin" className="text-sm font-medium">
@@ -162,21 +194,39 @@ export function HeroSearch() {
                 </Select>
               </div>
 
-              {/* Date */}
+              {/* Departure Date */}
               <div className="space-y-2">
                 <Label htmlFor="date" className="text-sm font-medium">
                   Ngày đi
                 </Label>
-                <Button
+                <input
+                  type="date"
                   id="date"
-                  variant="outline"
-                  className="h-12 w-full justify-start text-left font-normal"
-                  data-testid="button-date-picker"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {format(new Date(), "EEEE, dd/MM/yyyy", { locale: vi })}
-                </Button>
+                  value={departureDate}
+                  onChange={(e) => setDepartureDate(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  className="h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  data-testid="input-date"
+                />
               </div>
+
+              {/* Return Date - Only show for round trip */}
+              {tripType === "round-trip" && (
+                <div className="space-y-2">
+                  <Label htmlFor="return-date" className="text-sm font-medium">
+                    Ngày về
+                  </Label>
+                  <input
+                    type="date"
+                    id="return-date"
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                    min={departureDate || new Date().toISOString().split("T")[0]}
+                    className="h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    data-testid="input-return-date"
+                  />
+                </div>
+              )}
 
               {/* Ticket Count */}
               <div className="space-y-2">
@@ -211,7 +261,7 @@ export function HeroSearch() {
               <Bus className="mr-2 h-5 w-5" />
               TÌM CHUYẾN XE
             </Button>
-          </div>
+          </form>
         </div>
       </div>
     </section>
