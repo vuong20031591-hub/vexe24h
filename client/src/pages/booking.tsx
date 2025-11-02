@@ -28,12 +28,22 @@ export default function Booking() {
     note: "",
   });
   const [pickupDropoff, setPickupDropoff] = useState<PickupDropoff>({
-    pickupPoint: "Bến xe Miền Đông",
-    dropoffPoint: "Bến xe Đà Lạt",
+    pickupPoint: "",
+    dropoffPoint: "",
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("momo");
   const [promoCode, setPromoCode] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
+
+  // Auto-fill pickup/dropoff from schedule
+  useEffect(() => {
+    if (schedule) {
+      setPickupDropoff({
+        pickupPoint: `Bến xe ${schedule.from}`,
+        dropoffPoint: `Bến xe ${schedule.to}`,
+      });
+    }
+  }, [schedule]);
 
   // Promo codes database
   const promoCodes: Record<string, { discount: number; type: "percent" | "fixed" }> = {
