@@ -520,6 +520,7 @@ export default function SearchResults() {
         onOpenChange={setDialogOpen}
         from={searchQuery.from}
         to={searchQuery.to}
+        tripType={searchQuery.tripType}
       />
     </div>
   );

@@ -172,7 +172,7 @@ export function LoginDialog({ open, onOpenChange, onLoginSuccess }: LoginDialogP
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
-            Chào mừng đến với DatVe360
+            Chào mừng đến với Vé xe 24h
           </DialogTitle>
           <DialogDescription className="text-center">
             Đăng nhập hoặc đăng ký để tiếp tục

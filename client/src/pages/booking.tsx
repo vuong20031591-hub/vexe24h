@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Loader2, Check, Smartphone, CreditCard, Building2 } from "lucide-react";
+import { Loader2, Check, Smartphone, CreditCard, Building2, Tag, X } from "lucide-react";
 import { routeService, seatService, bookingService } from "@/services";
 import type { Seat, PassengerInfo, PickupDropoff, PaymentMethod } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -32,6 +32,15 @@ export default function Booking() {
     dropoffPoint: "Bến xe Đà Lạt",
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("momo");
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
+
+  // Promo codes database
+  const promoCodes: Record<string, { discount: number; type: "percent" | "fixed" }> = {
+    "KHUHOI10": { discount: 10, type: "percent" },
+    "THANG11": { discount: 50000, type: "fixed" },
+    "CUOITUAN15": { discount: 15, type: "percent" },
+  };
 
   // Fetch schedule
   const { data: schedule, isLoading: scheduleLoading } = useQuery({
@@ -88,7 +97,10 @@ export default function Booking() {
             arrivalTime: schedule.arrivalTime,
             departureDate: schedule.departureDate,
             busType: schedule.busType,
-          }
+          },
+          promoCode: appliedPromo?.code || null,
+          discount: discountAmount,
+          subtotal: subtotalPrice,
         };
         tickets.push(ticketWithSchedule);
         localStorage.setItem("tickets", JSON.stringify(tickets));
@@ -112,6 +124,81 @@ export default function Booking() {
   const handleSeatClick = (seat: Seat) => {
     if (seat.status === "booked") return;
     toggleSeatMutation.mutate(seat.id);
+  };
+
+  const handleApplyPromo = () => {
+    const code = promoCode.trim().toUpperCase();
+    const promo = promoCodes[code];
+
+    if (!promo) {
+      toast({
+        title: "Mã khuyến mãi không hợp lệ",
+        description: "Vui lòng kiểm tra lại mã khuyến mãi",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate KHUHOI10: Only for HCM - Đà Lạt route and round-trip
+    if (code === "KHUHOI10") {
+      if (!schedule) {
+        toast({
+          title: "Không thể áp dụng mã",
+          description: "Không tìm thấy thông tin chuyến xe",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const isValidRoute = 
+        (schedule.from === "Hồ Chí Minh" && schedule.to === "Đà Lạt") ||
+        (schedule.from === "Đà Lạt" && schedule.to === "Hồ Chí Minh");
+
+      if (!isValidRoute) {
+        toast({
+          title: "Mã không áp dụng cho tuyến này",
+          description: "Mã KHUHOI10 chỉ áp dụng cho tuyến Hồ Chí Minh - Đà Lạt",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check if it's round-trip by looking at URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const tripType = urlParams.get("tripType");
+      
+      if (tripType !== "round-trip") {
+        toast({
+          title: "Mã chỉ áp dụng cho vé khứ hồi",
+          description: "Vui lòng đặt vé khứ hồi để sử dụng mã KHUHOI10",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    const subtotal = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
+    let discountAmount = 0;
+
+    if (promo.type === "percent") {
+      discountAmount = Math.floor((subtotal * promo.discount) / 100);
+    } else {
+      discountAmount = Math.min(promo.discount, subtotal);
+    }
+
+    setAppliedPromo({ code, discount: discountAmount });
+    toast({
+      title: "Áp dụng mã thành công!",
+      description: `Bạn được giảm ${formatPrice(discountAmount)}`,
+    });
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoCode("");
+    toast({
+      title: "Đã xóa mã khuyến mãi",
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -181,15 +268,18 @@ export default function Booking() {
       return;
     }
 
-    const totalPrice = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
+    const subtotal = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
+    const discount = appliedPromo?.discount || 0;
+    const finalTotal = subtotal - discount;
 
     createBookingMutation.mutate({
       scheduleId,
       seatIds: selectedSeats.map(s => s.id),
       passengerInfo,
       pickupDropoff,
-      totalPrice,
+      totalPrice: finalTotal,
       paymentMethod,
+      promoCode: appliedPromo?.code,
     });
   };
 
@@ -197,7 +287,9 @@ export default function Booking() {
     return new Intl.NumberFormat("vi-VN").format(price) + "đ";
   };
 
-  const totalPrice = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
+  const subtotalPrice = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
+  const discountAmount = appliedPromo?.discount || 0;
+  const totalPrice = subtotalPrice - discountAmount;
 
   // Check if form is valid
   const isFormValid =
@@ -418,12 +510,73 @@ export default function Booking() {
                       : "Chưa chọn ghế"}
                   </p>
                 </div>
+
+                {/* Promo Code Section */}
                 <div className="border-t pt-4">
-                  <div className="flex justify-between text-lg font-bold">
+                  <Label htmlFor="promoCode" className="mb-2 flex items-center gap-2 text-sm font-medium">
+                    <Tag className="h-4 w-4 text-futa-red" />
+                    Mã khuyến mãi
+                  </Label>
+                  {!appliedPromo ? (
+                    <div className="flex gap-2">
+                      <Input
+                        id="promoCode"
+                        placeholder="Nhập mã giảm giá"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleApplyPromo}
+                        disabled={!promoCode.trim()}
+                      >
+                        Áp dụng
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg bg-green-50 p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Tag className="h-4 w-4 text-green-600" />
+                          <div>
+                            <p className="font-medium text-green-900">{appliedPromo.code}</p>
+                            <p className="text-sm text-green-700">Giảm {formatPrice(appliedPromo.discount)}</p>
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleRemovePromo}
+                          className="h-8 w-8 text-green-700 hover:text-green-900"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Price Breakdown */}
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Tạm tính:</span>
+                    <span>{formatPrice(subtotalPrice)}</span>
+                  </div>
+                  {appliedPromo && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-green-600">Giảm giá:</span>
+                      <span className="text-green-600">-{formatPrice(discountAmount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-lg font-bold pt-2 border-t">
                     <span>Tổng tiền:</span>
                     <span className="text-futa-red">{formatPrice(totalPrice)}</span>
                   </div>
                 </div>
+
                 <Button
                   className="w-full bg-futa-red hover:bg-futa-red/90"
                   onClick={handleSubmit}

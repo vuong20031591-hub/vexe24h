@@ -40,7 +40,7 @@ export const useSearchStore = create<SearchState>()(
       clearRecentSearches: () => set({ recentSearches: [] }),
     }),
     {
-      name: "datve360-search-storage",
+      name: "vexe24h-search-storage",
     }
   )
 );

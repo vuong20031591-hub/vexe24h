@@ -16,6 +16,7 @@ interface ScheduleDetailDialogProps {
   onOpenChange: (open: boolean) => void;
   from: string;
   to: string;
+  tripType?: string;
 }
 
 export function ScheduleDetailDialog({
@@ -24,6 +25,7 @@ export function ScheduleDetailDialog({
   onOpenChange,
   from,
   to,
+  tripType,
 }: ScheduleDetailDialogProps) {
   const [, setLocation] = useLocation();
 
@@ -50,7 +52,10 @@ export function ScheduleDetailDialog({
 
   const handleBooking = () => {
     onOpenChange(false);
-    setLocation(`/booking/${schedule.id}`);
+    const url = tripType 
+      ? `/booking/${schedule.id}?tripType=${tripType}`
+      : `/booking/${schedule.id}`;
+    setLocation(url);
   };
 
   return (

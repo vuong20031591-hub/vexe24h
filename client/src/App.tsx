@@ -10,6 +10,9 @@ import BookingSuccess from "@/pages/booking-success";
 import MyTickets from "@/pages/my-tickets";
 import NewsPage from "@/pages/news";
 import NewsDetail from "@/pages/news-detail";
+import Terms from "@/pages/terms";
+import Refund from "@/pages/refund";
+import Lookup from "@/pages/lookup";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,6 +25,9 @@ function Router() {
       <Route path="/my-tickets" component={MyTickets} />
       <Route path="/news/:id" component={NewsDetail} />
       <Route path="/news" component={NewsPage} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/refund" component={Refund} />
+      <Route path="/lookup" component={Lookup} />
       <Route component={NotFound} />
     </Switch>
   );

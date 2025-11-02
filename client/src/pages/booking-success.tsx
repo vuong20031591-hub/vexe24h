@@ -74,7 +74,7 @@ export default function BookingSuccess() {
             Đặt vé thành công!
           </h1>
           <p className="text-gray-600">
-            Cảm ơn bạn đã sử dụng dịch vụ của DatVe360
+            Cảm ơn bạn đã sử dụng dịch vụ của Vé xe 24h
           </p>
         </div>
 
@@ -120,8 +120,22 @@ export default function BookingSuccess() {
             </div>
 
             {/* Price */}
-            <div className="border-t pt-4">
-              <div className="flex justify-between text-lg">
+            <div className="border-t pt-4 space-y-2">
+              {(booking as any).discount > 0 && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Tạm tính:</span>
+                    <span>{formatPrice((booking as any).subtotal || (booking.totalPrice + (booking as any).discount))}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-600">
+                      Giảm giá {(booking as any).promoCode && `(${(booking as any).promoCode})`}:
+                    </span>
+                    <span className="text-green-600">-{formatPrice((booking as any).discount)}</span>
+                  </div>
+                </>
+              )}
+              <div className="flex justify-between text-lg pt-2 border-t">
                 <span className="font-semibold">Tổng tiền:</span>
                 <span className="font-bold text-futa-red">
                   {formatPrice(booking.totalPrice)}

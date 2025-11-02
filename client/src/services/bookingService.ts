@@ -25,23 +25,8 @@ export const bookingService = {
     // Simulate validation
     await delay(500);
 
-    // Validate promo code nếu có
-    let finalPrice = request.totalPrice;
-    if (request.promoCode) {
-      const validation = await promotionService.validatePromoCode(request.promoCode);
-      
-      if (!validation.valid) {
-        throw new Error(validation.message);
-      }
-
-      if (validation.promotion) {
-        const discount = promotionService.calculateDiscount(
-          request.totalPrice,
-          validation.promotion
-        );
-        finalPrice = request.totalPrice - discount;
-      }
-    }
+    // Note: totalPrice in request is already discounted price from client
+    // promoCode is passed for reference only, no recalculation needed
 
     // Simulate payment processing
     await delay(2000);
@@ -54,7 +39,7 @@ export const bookingService = {
       code: bookingCode,
       status: "confirmed",
       createdAt: new Date().toISOString(),
-      totalPrice: finalPrice,
+      totalPrice: request.totalPrice, // Use the discounted price from request
     };
 
     // Save to localStorage

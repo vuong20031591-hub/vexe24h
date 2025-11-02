@@ -78,11 +78,24 @@ export function HeroSearch() {
         <div className="w-full max-w-5xl">
           {/* Title */}
           <div className="mb-8 text-center">
-            <h1 className="mb-4 text-4xl font-bold text-white sm:text-5xl lg:text-6xl">
-              Đặt vé xe bus trực tuyến
+            <h1 
+              className="mb-4 text-4xl font-black uppercase sm:text-5xl lg:text-6xl text-white"
+              style={{
+                textShadow: `
+                  3px 3px 0px #d5181d,
+                  6px 6px 0px #a31414,
+                  9px 9px 0px #7a0f0f,
+                  12px 12px 20px rgba(0,0,0,0.5)
+                `,
+                WebkitTextStroke: '2px #fbbf24',
+                paintOrder: 'stroke fill',
+                letterSpacing: '0.05em'
+              }}
+            >
+              Đặt vé xe trực tuyến
             </h1>
             <p className="text-lg text-white/90 sm:text-xl">
-              Nhanh chóng, tiện lợi, an toàn
+              <span className="font-semibold text-orange-400">Một chạm liền tay</span> - <span className="font-semibold text-orange-400">vững bước mỗi ngày</span>
             </p>
           </div>
 

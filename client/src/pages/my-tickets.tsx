@@ -143,7 +143,7 @@ export default function MyTickets() {
           <body>
             <div class="ticket">
               <div class="header">
-                <h1>DatVe360</h1>
+                <h1>Vé xe 24h</h1>
                 <div class="code">MÃ VÉ: ${ticket.code}</div>
               </div>
               ${ticket.scheduleDetails ? `
@@ -188,9 +188,19 @@ export default function MyTickets() {
                 <div class="label">Điểm trả:</div>
                 <div>${ticket.pickupDropoff.dropoffPoint}</div>
               </div>
+              ${(ticket as any).discount > 0 ? `
+              <div class="section">
+                <div class="label">Tạm tính:</div>
+                <div>${formatPrice((ticket as any).subtotal || (ticket.totalPrice + (ticket as any).discount))}</div>
+              </div>
+              <div class="section">
+                <div class="label">Giảm giá (${(ticket as any).promoCode}):</div>
+                <div style="color: green;">-${formatPrice((ticket as any).discount)}</div>
+              </div>
+              ` : ''}
               <div class="section">
                 <div class="label">Tổng tiền:</div>
-                <div>${formatPrice(ticket.totalPrice)}</div>
+                <div style="font-weight: bold; color: #d5181d;">${formatPrice(ticket.totalPrice)}</div>
               </div>
               <div class="section">
                 <div class="label">Trạng thái:</div>
@@ -279,6 +289,16 @@ export default function MyTickets() {
                       </p>
                     </div>
                     <div className="text-right">
+                      {(ticket as any).discount > 0 && (
+                        <div className="mb-1">
+                          <p className="text-xs text-gray-500 line-through">
+                            {formatPrice((ticket as any).subtotal || (ticket.totalPrice + (ticket as any).discount))}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            -{formatPrice((ticket as any).discount)} ({(ticket as any).promoCode})
+                          </p>
+                        </div>
+                      )}
                       <p className="text-2xl font-bold text-futa-red">
                         {formatPrice(ticket.totalPrice)}
                       </p>
