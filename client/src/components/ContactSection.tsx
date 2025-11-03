@@ -160,7 +160,7 @@ export function ContactSection() {
           {/* Contact Image */}
           <div className="flex min-h-[500px] items-center overflow-hidden rounded-lg lg:-ml-6 lg:min-h-0 lg:rounded-l-none">
             <img
-              src="/generated_images/contact.png"
+              src="/generated_images/map.png"
               alt="Liên hệ với chúng tôi"
               className="block h-auto w-full"
             />

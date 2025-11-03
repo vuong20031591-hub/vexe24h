@@ -69,11 +69,11 @@ export function PromoCarousel() {
     <section className="bg-white py-16 sm:py-20" id="promotions" data-testid="section-promotions">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-gray-900 sm:text-3xl">
+        <div className="mb-8 relative">
+          <h2 className="text-2xl font-semibold text-gray-900 sm:text-3xl text-center">
             Khuyến mãi nổi bật
           </h2>
-          <div className="flex gap-2">
+          <div className="absolute right-0 top-0 flex gap-2">
             <Button
               variant="outline"
               size="icon"
